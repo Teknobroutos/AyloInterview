@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <!--jQuery library -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Bootstrap JS and its dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- favicon -->
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <!-- <link rel="stylesheet" href="style.css">  Style.css file link -->
+    <meta charset="UTF-8">
+
+    <title>Personal Details</title>
+    <style>
+      body {
+        background-color: #333;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+      }
+
+      .content {
+        max-width: 800px;
+        margin: auto;
+        text-align: center;
+        padding: 20px;
+        background-color: #444;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+      }
+
+      .detail-text,
+      p {
+        background-color: #555;
+        color: #ffa500;
+        padding: 10px;
+        border-radius: 8px;
+        margin: 10px 0;
+        display: inline-block;
+        width: auto;
+        max-width: 90%;
+      }
+
+      .carousel {
+        background-color: #444;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        margin-top: 20px;
+      }
+
+      .carousel-inner {
+        border-radius: 8px;
+      }
+
+      .carousel-item {
+        text-align: center;
+        height: 300px;
+      }
+
+      .carousel-item img {
+        max-height: 100%;
+        max-width: 100%;
+        object-fit: contain;
+        margin: auto;
+        background-color: #333;
+      }
+
+      .carousel-caption {
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 5px;
+        bottom: 10%;
+      }
+
+      .carousel-control-prev,
+      .carousel-control-next {
+        height: 50%;
+        top: 25%;
+      }
+
+      .carousel-control-prev-icon,
+      .carousel-control-next-icon {
+        width: 20px;
+        height: 20px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-color: #ffa500;
+        border-radius: 50%;
+      }
+      
+      .carousel-indicators li {
+        background-color: #ffa500;
+      }
+
+      .carousel-indicators .active {
+        background-color: #cc8400;
+      }
+
+      .carousel-image-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .carousel-rank {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #ffa500;
+        padding: 5px;
+        border-radius: 0 5px 5px 0;
+        font-size: 16px;
+        z-index: 2;
+      }
+
+      .thumbnail-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .thumbnail {
+        position: relative;
+        width: 150px;
+      }
+
+      .thumbnail-title {
+        color: #ffa500;
+        font-size: 14px;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+
+      .thumbnail-image {
+        position: relative;
+      }
+
+      .thumbnail-image img {
+        border: 1px solid #ffa500;
+        border-radius: 4px;
+        object-fit: contain;
+        max-height: 100%;
+        max-width: 100%;
+      }
+
+      .photo-type {
+        position: absolute;
+        top: 0;
+        left: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        color: #ffa500;
+        font-size: 12px;
+        padding: 2px 5px;
+        border-radius: 0 0 8px 0;
+      }
+
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        background-color: #ffa500;
+        color: #333;
+        padding: 10px 20px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      a:hover {
+        background-color: #cc8400;
+      }
+
+      h3 {
+        color: #ffa500;
+        background-color: #444;
+        padding: 10px 20px;
+        border-radius: 5px;
+        border: 2px solid #ffa500;
+        display: inline-block;
+        margin: 20px 0;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        text-transform: uppercase;
+        font-weight: bold;
+        letter-spacing: 1px;
+      }
+
+      .back-to-list a {
+        display: inline-block;
+        text-decoration: none;
+        background-color: #ffa500;
+        color: #fff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: 2px solid #ffa500;
+        transition: background-color 0.3s, color 0.3s;
+        font-weight: bold;
+      }
+
+      .back-to-list a:hover,
+      .back-to-list a:focus {
+        background-color: #cc8400;
+        color: #fff;
+        border-color: #cc8400;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="content">
+      <!-- Item's name as main heading -->
+      <h1>Personal Details: {{ item['name'] }}</h1>
+
+      <!-- Display gender attribute -->
+      <div class="detail-text">Gender: {{ item['attributes']['gender'] }}</div>
+
+      <!-- Checks if the age attribute exists before displaying it (Because some ages where missing from the JSON Data Set) -->
+      {% if item['attributes'].get('age') %}
+      <div class="detail-text">Age: {{ item['attributes']['age'] }}</div>
+      {% endif %}
+
+      <!-- Displays the orientation attribute -->
+      <div class="detail-text">Orientation: {{ item['attributes']['orientation'] }}</div>
+
+      <!-- Displays the ethnicity attribute -->
+      <div class="detail-text">Ethnicity: {{ item['attributes']['ethnicity'] }}</div>
+
+      <!-- Displays the hair color attribute -->
+      <div class="detail-text">Hair Color: {{ item['attributes']['hairColor'] }}</div>
+
+      <!-- Checks if the breast size attribute exists (Because of different genders) -->
+      {% if item['attributes'].get('breastSize') %}
+      <br>
+      <div class="detail-text">Breast Size: {{ item['attributes']['breastSize'] }}</div>
+      {% endif %}
+      <!-- Checks and displays the breast type -->
+      {% if item['attributes'].get('breastType') %}
+      <div class="detail-text">Breast Type: {{ item['attributes']['breastType'] }}</div>
+      <br>
+      {% endif %}
+
+      <h1>Stats</h1>
+      <!-- more attributes about the item -->
+      <p>Subscriptions: {{ item['attributes']['stats']['subscriptions'] }}</p>
+      <p>Monthly Searches: {{ item['attributes']['stats']['monthlySearches'] }}</p>
+      <p>Views: {{ item['attributes']['stats']['views'] }}</p>
+      <p>Videos Count: {{ item['attributes']['stats']['videosCount'] }}</p>
+      <p>Premium Videos Count: {{ item['attributes']['stats']['premiumVideosCount'] }}</p>
+      <p>White Label Video Count: {{ item['attributes']['stats']['whiteLabelVideoCount'] }}</p>
+      <br></br>
+      <!-- Item's ranking with different styling -->
+      <h3>Rank: {{ item['attributes']['stats']['rank'] }}</h3>
+      <h3>Rank Premium: {{ item['attributes']['stats']['rankPremium'] }}</h3>
+      <h3>Rank WL: {{ item['attributes']['stats']['rankWl'] }}</h3>
+
+      <!-- Thumbnails/images -->
+      <div class="thumbnails">
+        <h1>Thumbnails</h1>
+        <div class="thumbnail-container">
+          <!-- Iterates over each thumbnail and displays it -->
+          {% for thumbnail in item['thumbnails'] %}
+          <div class="thumbnail">
+            <div class="thumbnail-image">
+              <!-- Checks for the existence of URLs before attempting to display the first one -->
+              {% if thumbnail['urls'] %}
+              <img src="{{ thumbnail['urls'][0] }}" alt="Thumbnail">
+              <!-- displays the photo type (thumbnail attribute) -->
+              <span class="photo-type">{{ thumbnail['type'] }}</span>
+              {% else %}
+              <p>No Image Available</p>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Recommendations Carousel-->
+      <h1>Recommendations</h1>
+      <div id="recommendationsCarousel" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <!-- Iterates over each recommendation -->
+          {% for rec in recommendations %}
+          <div class="carousel-item {% if loop.first %}active{% endif %}">
+            <!-- Link to the detailed view of the recommended item -->
+            <a href="{{ url_for('main.item_detail', item_id=rec['id']) }}">
+              <div class="d-flex justify-content-center align-items-center" style="height: 250px; background-color: #555;">
+                <!-- Checks for the existence of thumbnail URLs before displaying one -->
+                {% if rec['thumbnails'] and rec['thumbnails'][0]['urls'] %}
+                <div class="carousel-image-container">
+                  <img src="{{ rec['thumbnails'][0]['urls'][0] }}" class="d-block" alt="{{ rec['name'] }}" style="object-fit: contain; width: 100%; height: 100%;">
+                  <!-- Displays the rank of the recommendation -->
+                  <div class="carousel-rank">Rank {{ rec['attributes']['stats']['rank'] }}</div>
+                </div>
+                <!-- in case of no image -->
+                {% else %}
+                <span class="text-center" style="color: #ffa500;">No Image Available</span>
+                {% endif %}
+              </div>
+            </a>
+            <!-- Carousel caption for additional context or navigation -->
+            <div class="carousel-caption d-none d-md-block">
+              <h5>{{ rec['name'] }}</h5>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <!-- Carousel controls for navigating between slides -->
+        <a class="carousel-control-prev" href="#recommendationsCarousel" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#recommendationsCarousel" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+      <!-- button back to the main list of items -->
+      <div class="back-to-list">
+        <a href="{{ url_for('main.index') }}" class="btn btn-primary">Back to List</a>
+      </div>
+    </div>
+  </body>
+</html>

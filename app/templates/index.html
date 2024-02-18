@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <meta charset="UTF-8">
+    <title>PornStar Rankings</title>
+    <style>
+        body {
+            background-color: #333; 
+            color: #fff; 
+            font-family: Arial, sans-serif; 
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            margin-bottom: 80px; 
+        }
+        .grid-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none; /* Remove underline from links */
+            position: relative;
+            border: 1px solid #444; 
+            padding: 10px;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: #222; 
+            color: #fff; 
+        }
+        .grid-item img, .grid-item .no-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .no-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #444; /* Lighter grey for no image placeholder */
+            color: #ffa500; /* Orange text "Picture not found" */
+            font-size: 16px;
+        }
+        .item-name {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .rank {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background-color: rgba(0, 0, 0, 0.75); /*black for rank background */
+            color: #ffa500; /* Orange text for rank */
+            padding: 5px;
+            border-radius: 5px;
+        }
+        /* Pagination Styles */
+        .pagination {
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            background: #444; 
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.3);
+        }
+        .pagination a, .pagination form {
+            margin: 0 10px;
+            color: #ffa500; /* Orange color for links */
+            text-decoration: none;
+        }
+        .pagination form {
+            display: inline-block;
+        }
+        .pagination input[type="number"], .pagination button {
+            border: 1px solid #ffa500; /* Orange border for inputs and buttons */
+            background-color: #222; /* background for input and button */
+            color: #ffa500; /* Orange text */
+            padding: 5px;
+            margin-left: 5px;
+            border-radius: 5px;
+        }
+        .pagination button:hover {
+            background-color: #333; /* Darken button on hover */
+            color: #fff;
+        }
+        h1 {
+            text-align: center; /* Center-align the title */
+            margin-top: 20px; /* Add space at the top */
+            color: #ffa500; 
+        }
+    </style>
+</head>
+<body>
+    <h1>PornStar Rankings</h1>
+    <div class="grid-container">
+        <!-- Calculate the base rank for items on the current page -->
+        {% set base_rank = (page - 1) * per_page %}
+        <!-- Loop through each item in the 'items' list -->
+        {% for item in items %}
+            <!-- Link to the detailed view of the item -->
+            <a href="{{ url_for('main.item_detail', item_id=item['id']) }}" class="grid-item">
+                <!-- Display the rank of the item -->
+                <div class="rank">RANK  {{ base_rank + loop.index }}</div>
+                <!-- Check if the item has thumbnails and display the first one -->
+                {% if item.thumbnails and item.thumbnails[0].urls %}
+                    <img src="{{ item.thumbnails[0].urls[0] }}" alt="{{ item.name }}">
+                {% else %}
+                    <!-- Display a placeholder if no thumbnail is available -->
+                    <div class="no-image">Picture not found</div>
+                {% endif %}
+                <!-- Display the name of the item -->
+                <div class="item-name">{{ item.name }}</div>
+            </a>
+        {% else %}
+            <!-- Message if no items are found -->
+            <p>No items found.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination controls -->
+    <div class="pagination">
+        <!-- Link to the first page -->
+        <a href="{{ url_for('main.index', page=1) }}">First</a>
+        <!-- Link to the previous page if it exists -->
+        {% if page > 1 %}
+            <a href="{{ url_for('main.index', page=page-1) }}">Previous</a>
+        {% endif %}
+        <!-- Display the current page number and the total number of pages -->
+        <span>Page {{ page }} of {{ total_pages }}</span>
+        <!-- Link to the next page if it exists -->
+        {% if page < total_pages %}
+            <a href="{{ url_for('main.index', page=page+1) }}">Next</a>
+        {% endif %}
+        <!-- Link to the last page -->
+        <a href="{{ url_for('main.index', page=total_pages) }}">Last</a>
+
+        <!-- Go to a specific page controls-->
+        <form action="" method="get">
+            <label for="page">Go to page:</label>
+            <input type="number" name="page" id="page" min="1" max="{{ total_pages }}" value="{{ page }}">
+            <button type="submit">Go</button>
+        </form>
+    </div>
+</body>
+</html>
+
+
